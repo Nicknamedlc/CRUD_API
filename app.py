@@ -1,23 +1,20 @@
-from http import HTTPStatus
-from fast_zero.schemas import Message
+import http
+
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+
+from fast_zero.schemas import Message, UserSchema, UserPublic
 
 app = FastAPI()
 
 
-@app.get('/', status_code=HTTPStatus.OK, response_model=Message)
-async def read_root():
+@app.get('/', status_code=http.HTTPStatus.OK, response_model=Message)
+def read_root():
     return {'message': 'Olá Mundo'}
 
 
-@app.get('/soma/{num1}/{num2}', status_code=HTTPStatus.OK, response_model=Message)
-async def soma(num1: int, num2: int):
-    return {"message": str(num1 + num2)}
-
-
-@app.get('/olamundo', response_class=HTMLResponse)
-async def say_hello():
+@app.get('/olamundo/', response_class=HTMLResponse)
+def say_hello():
     return """
     <html>
       <head>
@@ -28,3 +25,8 @@ async def say_hello():
         <h2> Hoje é um novo dia</h2>
       </body>
     </html>"""
+
+
+@app.post('/users/', status_code=http.HTTPStatus.CREATED, response_model=UserPublic)
+def create_user(user: UserSchema):
+    return user

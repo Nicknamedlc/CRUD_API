@@ -5,12 +5,10 @@ Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/hello/User
+GET http://127.0.0.1:8000/olamundo
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/soma/0/0
+POST 127.0.0.1:8000/users/
 Accept: application/json
-
-###
