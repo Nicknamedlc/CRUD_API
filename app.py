@@ -1,9 +1,9 @@
 import http
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 
-from fast_zero.schemas import Message, UserSchema, UserPublic, UserDB
+from fast_zero.schemas import Message, UserSchema, UserPublic, UserDB, UserList
 
 app = FastAPI(title="API dos sonhos!")
 database = []
@@ -30,10 +30,22 @@ def say_hello():
 
 @app.post('/users/', status_code=http.HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user: UserSchema):
-    user_id = UserDB(**user.model_dump(),id = len(database)+1)
+    user_id = UserDB(**user.model_dump(), id=len(database) + 1)
     database.append(user_id)
     return user_id
 
-@app.get('/users/',status_code=http.HTTPStatus.OK)
+
+@app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
 def read_user():
-    return database
+    return {'users': database}
+
+
+@app.put('/users/', response_model=UserPublic)
+def update_user(user_id: int, user: UserSchema):
+    if user_id > len(database) or user_id < 1:
+        raise HTTPException(
+            status_code=http.HTTPStatus.NOT_FOUND,
+            detail='User not found')
+    user_with_id = UserDB(**user.model_dump(), id=user_id)
+    database[user_id - 1] = user_with_id
+    return user_with_id

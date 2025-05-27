@@ -37,3 +37,13 @@ class TestApp:
     def test_read_users(self, client):
         response = client.get("/users/")
         assert response.status_code == HTTPStatus.OK
+        assert response.json() == {
+
+            'users': [
+                {
+                    'username': 'string',
+                    'email': 'user@example.com',
+                    'id': 1
+                }
+            ]
+        }
