@@ -1,9 +1,10 @@
 [project]
-name = "primeiro fast API"
+name = "API tasks"
 version = "0.0.1"
-description = "Aprendendo a usar o Fast API"
+description = "Criando uma API para armazenar usuários e tasks e interagirem entre si"
 authors = [
-    {name = "João Trajano",email = "joaovictor.borbatrajano@gmail.com"}
+    {name = "João Trajano",email = "joaovictor.borbatrajano@gmail.com"},
+    {name = 'Victório Faraco'}
 ]
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
