@@ -3,8 +3,12 @@ from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 
 from fast_zero.schemas import Message, UserDB, UserList, UserPublic, UserSchema
+from fast_zero.models import User
+from fast_zero.settings import Settings
 
 app = FastAPI(title='API dos sonhos!')
 database = []
@@ -33,9 +37,26 @@ def say_hello():
     '/users/', status_code=http.HTTPStatus.CREATED, response_model=UserPublic
 )
 def create_user(user: UserSchema):
-    user_id = UserDB(**user.model_dump(), id=len(database) + 1)
-    database.append(user_id)
-    return user_id
+    engine = create_engine(Settings().DATABASE_URL)
+
+    session = Session(engine)
+
+    db_user = session.scalar(
+        select(User).where(
+            (User.username == user.username) | (User.email == user.email)
+        )
+    )
+
+    if not db_user:
+        raise HTTPException(
+            status_code=http.HTTPStatus.CONFLICT, detail='User already exists'
+        )
+
+    else:
+        #coloca o novo user
+        new_user = UserDB(**user.model_dump())
+        database.append(new_user)
+        return new_user
 
 
 @app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
