@@ -4,7 +4,7 @@ from http import HTTPStatus
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 
-from api_tasks.schemas import Message, UserDB, UserList, UserPublic, UserSchema
+from fast_zero.schemas import Message, UserDB, UserList, UserPublic, UserSchema
 
 app = FastAPI(title='API dos sonhos!')
 database = []
