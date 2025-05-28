@@ -47,16 +47,22 @@ def create_user(user: UserSchema):
         )
     )
 
-    if not db_user:
-        raise HTTPException(
-            status_code=http.HTTPStatus.CONFLICT, detail='User already exists'
-        )
-
-    else:
-        # coloca o novo user
-        new_user = UserDB(**user.model_dump())
-        database.append(new_user)
-        return new_user
+    if db_user:
+        if db_user.username == user.username:
+            raise HTTPException(
+                detail='Username already exists',
+                status_code=http.HTTPStatus.CONFLICT,
+            )
+        elif db_user.email == user.email:
+            raise HTTPException(
+                detail='Email already exists',
+                status_code=http.HTTPStatus.CONFLICT,
+            )
+    db_user = User(**user.model_dump())
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
 
 
 @app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
