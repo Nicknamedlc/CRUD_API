@@ -6,8 +6,8 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
-from api_tasks.app import app
-from api_tasks.models import User, table_registry
+from fast_zero.app import app
+from fast_zero.models import User, table_registry
 
 
 @pytest.fixture
