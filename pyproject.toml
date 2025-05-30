@@ -1,18 +1,18 @@
-[project]
-name = "Fast Zero"
-version = "0.0.1"
-description = "Criando minha primeira API"
-authors = [
-    {name = "João Trajano",email = "joaovictor.borbatrajano@gmail.com"}
-]
+[tool.poetry]
+name = "fastzero"
+version = "0.1.0"
+description = "Minha primeira API"
+authors = ["jao <joaovictor.borbatrajano@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11,<4.0"
-dependencies = [
-    "alembic (>=1.16.1,<2.0.0)",
-    "fastapi[standard] (>=0.115.12,<0.116.0)",
-    "pydantic-settings (>=2.9.1,<3.0.0)",
-    "sqlalchemy (>=2.0.41,<3.0.0)"
-]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+pwdlib = "^0.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -46,7 +46,3 @@ run = 'fastapi dev fast_zero/app.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov -vv'
 post_test = 'coverage html'
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
