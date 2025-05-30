@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fast_zero.schemas import UserPublic
+from src.schemas import UserPublic
 
 
 def test_root(client):
