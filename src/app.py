@@ -8,10 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from fast_zero.database import get_session
-from fast_zero.models import User
-from fast_zero.schemas import Message, UserList, UserPublic, UserSchema
-from fast_zero.security import get_password_hash, verify_password
+from src.database import get_session
+from src.models import User
+from src.schemas import Message, UserList, UserPublic, UserSchema
+from src.security import get_password_hash, verify_password
 
 app = FastAPI(title='API dos sonhos!')
 
