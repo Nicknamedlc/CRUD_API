@@ -1,17 +1,17 @@
 import http
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from sqlalchemy import create_engine, select
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from fast_zero.database import get_session
 from fast_zero.models import User
-from fast_zero.schemas import Message, UserDB, UserList, UserPublic, UserSchema
-from fast_zero.settings import Settings
+from fast_zero.schemas import Message, UserList, UserPublic, UserSchema
 
 app = FastAPI(title='API dos sonhos!')
-database = []
 
 
 @app.get('/', status_code=http.HTTPStatus.OK, response_model=Message)
@@ -33,14 +33,18 @@ def say_hello():
     </html>"""
 
 
+@app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
+def read_user(
+    limit: int = 10, offset: int = 0, session: Session = Depends(get_session)
+):
+    user_list = session.scalars(select(User).limit(limit).offset(offset))
+    return {'users': user_list}
+
+
 @app.post(
     '/users/', status_code=http.HTTPStatus.CREATED, response_model=UserPublic
 )
-def create_user(user: UserSchema):
-    engine = create_engine(Settings().DATABASE_URL)
-
-    session = Session(engine)
-
+def create_user(user: UserSchema, session=Depends(get_session)):
     db_user = session.scalar(
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
@@ -65,33 +69,44 @@ def create_user(user: UserSchema):
     return db_user
 
 
-@app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
-def read_user():
-    return {'users': database}
-
-
 @app.put(
     '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
 )
-def update_user(user_id: int, user: UserSchema):
-    if user_id > len(database) or user_id < 1:
+def update_user(
+    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+):
+    user_db = session.scalar(select(User).where(User.id == user_id))
+    if not user_db:
         raise HTTPException(
-            status_code=http.HTTPStatus.NOT_FOUND, detail='User not found'
+            detail='User not found', status_code=HTTPStatus.NOT_FOUND
         )
-    user_with_id = UserDB(**user.model_dump(), id=user_id)
-    database[user_id - 1] = user_with_id
-    return user_with_id
+    try:
+        user_db.username = user.username
+        user_db.password = user.password
+        user_db.email = user.email
+        session.commit()
+        session.refresh(user_db)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Username or Email already exists',
+        )
+
+    return user_db
 
 
 @app.delete(
-    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
+    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=Message
 )
-def delete_user(user_id: int):
-    if user_id > len(database) or user_id < 1:
-        raise HTTPException(
-            status_code=http.HTTPStatus.NOT_FOUND, detail='User not found'
-        )
-    return database.pop(user_id - 1)
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+    user_db = session.scalar(select(User).where(User.id == user_id))
+
+    if not user_db:
+        raise HTTPException(HTTPStatus.NOT_FOUND, detail='User not found')
+    session.delete(user_db)
+    session.commit()
+
+    return {'message': 'User deleted'}
 
 
 @app.get(
@@ -99,9 +114,11 @@ def delete_user(user_id: int):
     status_code=http.HTTPStatus.OK,
     response_model=UserPublic,
 )
-def read_user_by_id(user_id: int):
-    if user_id > len(database) or user_id < 1:
+def read_user_by_id(user_id: int, session: Session = Depends(get_session)):
+    user_db = session.scalar(select(User).where(User.id == user_id))
+    if not user_db:
         raise HTTPException(
-            status_code=http.HTTPStatus.NOT_FOUND, detail='User not found'
+            detail='User not found', status_code=HTTPStatus.NOT_FOUND
         )
-    return database[user_id - 1]
+    else:
+        return user_db
