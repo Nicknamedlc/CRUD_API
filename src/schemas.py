@@ -1,6 +1,11 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
+class Token(BaseModel):
+    acces_token: str
+    token_type: str
+
+
 class Message(BaseModel):
     message: str
 

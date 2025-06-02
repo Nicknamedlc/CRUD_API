@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_session
 from src.models import User
-from src.schemas import Message, UserList, UserPublic, UserSchema
+from src.schemas import Message, Token, UserList, UserPublic, UserSchema
 from src.security import get_password_hash, verify_password
 
 app = FastAPI(title='API dos sonhos!')
@@ -131,7 +131,7 @@ def read_user_by_id(user_id: int, session: Session = Depends(get_session)):
         return user_db
 
 
-@app.post('/token/')
+@app.post('/token/', response_model=Token)
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session),
