@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class Token(BaseModel):
-    acces_token: str
+    access_token: str
     token_type: str
 
 

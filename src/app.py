@@ -11,7 +11,12 @@ from sqlalchemy.orm import Session
 from src.database import get_session
 from src.models import User
 from src.schemas import Message, Token, UserList, UserPublic, UserSchema
-from src.security import get_password_hash, verify_password
+from src.security import (
+    create_access_token,
+    get_current_user,
+    get_password_hash,
+    verify_password,
+)
 
 app = FastAPI(title='API dos sonhos!')
 
@@ -37,7 +42,10 @@ def say_hello():
 
 @app.get('/users/', status_code=http.HTTPStatus.OK, response_model=UserList)
 def read_user(
-    limit: int = 10, offset: int = 0, session: Session = Depends(get_session)
+    limit: int = 10,
+    offset: int = 0,
+    session: Session = Depends(get_session),
+    current_user=Depends(get_current_user),
 ):
     user_list = session.scalars(select(User).limit(limit).offset(offset))
     return {'users': user_list}
@@ -64,10 +72,9 @@ def create_user(user: UserSchema, session=Depends(get_session)):
                 detail='Email already exists',
                 status_code=http.HTTPStatus.CONFLICT,
             )
+    hashed_password = get_password_hash(user.password)
     db_user = User(
-        username=user.username,
-        email=user.email,
-        password=get_password_hash(user.password),
+        username=user.username, email=user.email, password=hashed_password
     )
 
     session.add(db_user)
@@ -137,6 +144,7 @@ def login_for_access_token(
     session: Session = Depends(get_session),
 ):
     user = session.scalar(select(User).where(User.email == form_data.username))
+
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
@@ -148,4 +156,5 @@ def login_for_access_token(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail='Incorrect email or password',
         )
-    ...
+    access_token = create_access_token({'sub': user.email})
+    return {'access_token': access_token, 'token_type': 'Bearer'}
