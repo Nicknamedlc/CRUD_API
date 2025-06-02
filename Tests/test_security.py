@@ -10,3 +10,4 @@ def test_jwt():
     decoded = decode(token, SECRET_KEY, algorithms=ALGORITHM)
 
     assert decoded['test'] == data['test']
+    assert 'exp' in decoded
