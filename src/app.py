@@ -47,7 +47,12 @@ def read_user(
     session: Session = Depends(get_session),
     current_user=Depends(get_current_user),
 ):
-    user_list = session.scalars(select(User).limit(limit).offset(offset))
+    user_list = session.scalars(
+        select(User)
+        .where(current_user.id == User.id)
+        .limit(limit)
+        .offset(offset)
+    )
     return {'users': user_list}
 
 
@@ -83,41 +88,47 @@ def create_user(user: UserSchema, session=Depends(get_session)):
     return db_user
 
 
-@app.put(
-    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
-)
+@app.put('/users/{user_id}', response_model=UserPublic)
 def update_user(
-    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+    user_id: int,
+    user: UserSchema,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
-    user_db = session.scalar(select(User).where(User.id == user_id))
-    if not user_db:
+    if current_user.id != user_id:
         raise HTTPException(
-            detail='User not found', status_code=HTTPStatus.NOT_FOUND
+            detail='Not enough permissions', status_code=HTTPStatus.FORBIDDEN
         )
     try:
-        user_db.username = user.username
-        user_db.password = get_password_hash(user.password)
-        user_db.email = user.email
+        current_user.username = user.username
+        current_user.password = get_password_hash(user.password)
+        current_user.email = user.email
         session.commit()
-        session.refresh(user_db)
+        session.refresh(current_user)
+
+        return current_user
     except IntegrityError:
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
             detail='Username or Email already exists',
         )
 
-    return user_db
-
 
 @app.delete(
-    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=Message
+    '/users/{user_id}',
+    status_code=HTTPStatus.OK,
+    response_model=Message,
 )
-def delete_user(user_id: int, session: Session = Depends(get_session)):
-    user_db = session.scalar(select(User).where(User.id == user_id))
-
-    if not user_db:
-        raise HTTPException(HTTPStatus.NOT_FOUND, detail='User not found')
-    session.delete(user_db)
+def delete_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            detail='Not enough permissions', status_code=HTTPStatus.FORBIDDEN
+        )
+    session.delete(current_user)
     session.commit()
 
     return {'message': 'User deleted'}
