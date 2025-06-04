@@ -1,5 +1,21 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
+from src.models import TaskState
+
+
+class TaskSchema(BaseModel):
+    title: str
+    description: str
+    state: TaskState
+
+
+class TaskPublic(TaskSchema):
+    id: int
+
+
+class TaskList(BaseModel):
+    tasks: list[TaskPublic]
+
 
 class Token(BaseModel):
     access_token: str
@@ -30,3 +46,15 @@ class UserList(BaseModel):
 class FilterPage(BaseModel):
     offset: int = 0
     limit: int = 100
+
+
+class FilterTask(FilterPage):
+    title: str | None = None
+    description: str | None = None
+    state: TaskState | None = None
+
+
+class TaskUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    state: TaskState | None = None
