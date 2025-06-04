@@ -24,3 +24,24 @@ def test_create_user(session, mock_db_time, user):
         'created_at': time,
         'updated_at': time,
     }
+
+
+# def test_create_task(session, user):
+#     task = Task(
+#         title='Test Task',
+#         description='Vasco',
+#         state='criada',
+#         user_id=user.id,
+#     )
+#     session.add(task)
+#     session.commit()
+#
+#     task = session.scalar(select(task))
+#
+#     assert asdict(task) == {
+#         'description': 'Vasco',
+#         'id': 1,
+#         'state': 'criada',
+#         'title': 'Test Task',
+#         'user_id': 1,
+#     }
