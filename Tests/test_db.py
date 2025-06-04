@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 from sqlalchemy import select
 
-from src.models import User
+from src.models import Task, User
 
 
 def test_create_user(session, mock_db_time, user):
@@ -23,4 +23,26 @@ def test_create_user(session, mock_db_time, user):
         'password': 'secret',
         'created_at': time,
         'updated_at': time,
+        'tasks': [],
+    }
+
+
+def test_create_task(session, user):
+    task = Task(
+        title='Test Task',
+        description='Vasco',
+        state='criada',
+        user_id=user.id,
+    )
+    session.add(task)
+    session.commit()
+
+    task = session.scalar(select(task))
+
+    assert asdict(task) == {
+        'description': 'Vasco',
+        'id': 1,
+        'state': 'criada',
+        'title': 'Test Todo',
+        'user_id': 1,
     }
