@@ -1,9 +1,10 @@
 [project]
-name = "crud-api"
+name = "CRUD-TASK-API"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "jao",email = "joaovictor.borbatrajano@gmail.com"}
+    {name = "João",email = "joaovictor.borbatrajano@gmail.com"},
+    {name = "Victório",email = "victoriofaraco@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13, <4.0"
