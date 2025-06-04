@@ -91,6 +91,27 @@ classDiagram
     TaskRoute --> TaskSchema : Valida dados
     TaskRoute --> TaskModel : Salva/Consulta
     TaskModel --> Database : Persistência
+    
+    # Diagrama do Banco de dados
+    erDiagram
+    USER {
+        int id PK
+        string username
+        string email
+        string password
+        datetime created_at
+        datetime updated_at
+        int tasks FK
+    }
+    TASK {
+        int id PK
+        string title
+        string description
+        string state
+        int user_id FK
+    }
+
+    USER ||--o{ TASK : "assignee"
 ```
 
 ### **2. Diagrama de Sequência (Fluxo de Criação de Usuário)**
