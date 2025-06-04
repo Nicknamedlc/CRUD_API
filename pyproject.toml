@@ -22,7 +22,8 @@ dependencies = [
     "cryptography (>=45.0.3,<46.0.0)",
     "sqlalchemy[asyncio] (>=2.0.41,<3.0.0)",
     "poetry-core (>=2.0.0,<3.0.0)",
-    "aiosqlite (>=0.21.0,<0.22.0)"
+    "aiosqlite (>=0.21.0,<0.22.0)",
+    "loguru (>=0.7.3,<0.8.0)"
 ]
 [tool.coverage.run]
 concurrency = ["thread", "greenlet"]
