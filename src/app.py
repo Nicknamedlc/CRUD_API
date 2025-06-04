@@ -9,7 +9,7 @@ from loguru import logger
 from src.routes import auth, tasks, users
 from src.schemas import Message
 
-app = FastAPI(title='API dos sonhos!')
+app = FastAPI(title='CRUD TASK API')
 
 if __name__ == '__main__':
     uvicorn.run(
