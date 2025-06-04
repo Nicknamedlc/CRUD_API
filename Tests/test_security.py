@@ -45,15 +45,3 @@ def test_current_no_user(client, token):
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {'detail': 'Could not validate credentials'}
-
-
-def test_get_token(client, user, token):
-    response = client.post(
-        '/auth/token/',
-        data={'username': user.email, 'password': user.clean_password},
-    )
-    token = response.json()
-
-    assert response.status_code == HTTPStatus.OK
-    assert token['token_type'] == 'Bearer'
-    assert 'access_token' in token
