@@ -92,26 +92,8 @@ classDiagram
     TaskRoute --> TaskModel : Salva/Consulta
     TaskModel --> Database : Persistência
     
-    # Diagrama do Banco de dados
-    erDiagram
-    USER {
-        int id PK
-        string username
-        string email
-        string password
-        datetime created_at
-        datetime updated_at
-        int tasks FK
-    }
-    TASK {
-        int id PK
-        string title
-        string description
-        string state
-        int user_id FK
-    }
-
-    USER ||--o{ TASK : "assignee"
+    
+    
 ```
 
 ### **2. Diagrama de Sequência (Fluxo de Criação de Usuário)**
@@ -134,10 +116,32 @@ sequenceDiagram
     API-->>Cliente: 201 Created (JSON)
 ```
 
+### **3. Diagrama de Banco de dados**
+```mermaiderDiagram
+    USER {
+        int id PK
+        string username
+        string email
+        string password
+        datetime created_at
+        datetime updated_at
+        int tasks FK
+    }
+    TASK {
+        int id PK
+        string title
+        string description
+        string state
+        int user_id FK
+    }
+
+    USER ||--o{ TASK : "assignee"
+    ```
+
 ## **⚙️ Configuração e Execução**  
 
 ### **Pré-requisitos**  
-- Python 3.10+  
+- Python 3.13+  
 - SQLite  
 - Poetry (gerenciamento de dependências)  
 
