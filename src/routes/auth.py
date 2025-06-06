@@ -6,15 +6,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_session
-from src.models import User
-from src.routes.tasks import CurrentUser
-from src.schemas import Token
-from src.security import (
+from src.controllers.database import get_session
+from src.controllers.security import (
     create_access_token,
     get_current_user,
     verify_password,
 )
+from src.models.models import User
+from src.models.schemas import Token
+from src.routes.tasks import CurrentUser
 
 router = APIRouter(prefix='/auth', tags=['Autenticação'])
 Session = Annotated[AsyncSession, Depends(get_session)]

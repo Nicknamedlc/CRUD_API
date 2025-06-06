@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-from src.models import TaskState
+from src.models.models import TaskState
 
 
 class TaskSchema(BaseModel):

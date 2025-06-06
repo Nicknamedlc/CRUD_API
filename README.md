@@ -16,9 +16,12 @@ Este projeto consiste em uma **API RESTful** para um sistema de gestão de taref
 ✔ **CRUD de Tarefas** (Criar, Ler, Atualizar, Deletar)  
 ✔ **Atribuição de Tarefas** a usuários  
 ✔ **Autenticação JWT** (JSON Web Tokens)  
-✔ **Logs Estruturados** (com Uvicor)  
+✔ **Logs Estruturados** (com Uvicorn e loguru)  
 ✔ **Documentação Automatizada** (Swagger/OpenAPI)  
-✔ **Testes Automatizados** (Unitários e de Integração)  
+✔ **Testes Automatizados** (Unitários e de Integração, com pytest e ruff)  
+✔ **Formatação de código automático** (formatação por padrões)  
+
+
 
 ---
 
@@ -45,6 +48,7 @@ classDiagram
         +email: str
         +hashed_password: str
         +created_at: datetime
+        +updated_at: datetime
     }
 
     class UserSchema {
@@ -117,7 +121,8 @@ sequenceDiagram
 ```
 
 ### **3. Diagrama de Banco de dados**
-```mermaiderDiagram
+```mermaid
+erDiagram
     USER {
         int id PK
         string username
@@ -125,7 +130,7 @@ sequenceDiagram
         string password
         datetime created_at
         datetime updated_at
-        int tasks FK
+        int id_task FK
     }
     TASK {
         int id PK
@@ -136,7 +141,7 @@ sequenceDiagram
     }
 
     USER ||--o{ TASK : "assignee"
-    ```
+ ```
 
 ## **⚙️ Configuração e Execução**  
 
@@ -151,16 +156,15 @@ sequenceDiagram
 git clone https://github.com/Nicknamedlc/CRUD_API.git
 
 # Instale as dependências
-pip install -r requirements.txt
+pip install poetry
 
-# Configure o banco de dados (arquivo .env)
-DB_URL=postgresql+asyncpg://user:password@localhost:5432/taskdb
+poetry install CRUD_API
 
 # Execute as migrações (Alembic)
 alembic upgrade head
 
 # Inicie a API
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --reload-delay 10
 ```
 
 ### **Acesse a Documentação**  

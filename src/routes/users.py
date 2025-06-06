@@ -7,12 +7,18 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_session
-from src.models import User
-from src.schemas import FilterPage, Message, UserList, UserPublic, UserSchema
-from src.security import (
+from src.controllers.database import get_session
+from src.controllers.security import (
     get_current_user,
     get_password_hash,
+)
+from src.models.models import User
+from src.models.schemas import (
+    FilterPage,
+    Message,
+    UserList,
+    UserPublic,
+    UserSchema,
 )
 
 Session = Annotated[AsyncSession, Depends(get_session)]

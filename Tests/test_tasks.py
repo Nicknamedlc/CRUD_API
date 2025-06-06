@@ -3,7 +3,7 @@ from http import HTTPStatus
 import factory.fuzzy
 import pytest
 
-from src.models import Task, TaskState
+from src.models.models import Task, TaskState
 
 
 class TaskFactory(factory.Factory):

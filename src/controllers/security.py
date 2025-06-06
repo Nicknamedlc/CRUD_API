@@ -4,14 +4,15 @@ from zoneinfo import ZoneInfo
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jwt import DecodeError, ExpiredSignatureError, decode, encode
+from jose.jwt import ExpiredSignatureError, decode, encode
 from pwdlib import PasswordHash
+from python_multipart.exceptions import DecodeError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_session
-from src.models import User
-from src.settings import Settings
+from src.controllers.database import get_session
+from src.controllers.settings import Settings
+from src.models.models import User
 
 settings = Settings()
 

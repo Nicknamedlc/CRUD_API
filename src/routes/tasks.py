@@ -5,9 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_session
-from src.models import Task, User
-from src.schemas import (
+from src.controllers.database import get_session
+from src.controllers.security import get_current_user
+from src.models.models import Task, User
+from src.models.schemas import (
     FilterTask,
     Message,
     TaskList,
@@ -15,7 +16,6 @@ from src.schemas import (
     TaskSchema,
     TaskUpdate,
 )
-from src.security import get_current_user
 
 router = APIRouter(prefix='/tasks', tags=['Tarefas'])
 Session = Annotated[AsyncSession, Depends(get_session)]
